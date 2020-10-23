@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">GestorHogar</string>
+    <string name="guardar_btn">Guardar</string>
+    <string name="resumen_btn">Resumen</string>
+    <string name="addCategoria_btn">+</string>
+    <string name="addSubcategoria_btn">+</string>
+    <string name="tituloDialogo">asd</string>
+    <string name="hintNuevoValor">Nuevo</string>
+    <string name="dialogoAceptar_btn">Aceptar</string>
+    <string name="dialogoCancelar_btn">Cancelar</string>
+
+
+    <string-array name="categorias">
+        <item>Hogar</item>
+        <item>Deporte</item>
+        <item>Transporte</item>
+    </string-array>
+</resources>
