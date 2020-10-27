@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
     private static final int REQUEST_CODE_SUBCATEGORIA = 223;
     public static final String MENSAJE_SUBCATEGORIA = "subcategoria";
     public static final String MENSAJE_CATEGORIA_SELECCIONADA = "catSeleccionada";
-
+    public int refrescar = 0;
     ConexionSQLiteHelper conn;
 
     Spinner categoria, subCategoria;
@@ -234,12 +234,22 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
         resumen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                refrescar++;
                 Intent intent = new Intent(getApplicationContext(), ListaCategoriasActivity.class);
                 startActivity(intent);
             }
         });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(refrescar>0){
+            refrescar = 0;
+            recreate();
+        }
     }
 
     private void comprobarPermisos() {
@@ -319,7 +329,6 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
     }
 
     private void guardarSubcategoria(String subcategoria, String categoria){
-//        ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "bd_subcategorias", null, 1);
         SQLiteDatabase db = conn.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -328,8 +337,6 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
 
         Long idResultante = db.insert(Utilidades.TABLA_SUBCATEGORIA, Utilidades.CAMPO_ID, values);
 
-//        Toast.makeText(getApplicationContext(), "Id registro: "+idResultante, Toast.LENGTH_SHORT).show();
-//        Log.e("RESULTADO", idResultante+"");
 
         db.close();
         recreate();
@@ -370,6 +377,7 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
 
         if(arrayCategorias == null){
             arrayCategorias = new ArrayList<>();
+            resumen.setEnabled(false);
         }else{
             Collections.sort(arrayCategorias);
         }
@@ -402,8 +410,7 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
 //        }
     }
     //TODO: Conectar entre dispositivos
-    //TODO: comprobar boton resumen cuando no hay categorias
-    //TODO: cambiar actibity listas cuando no hay subcategorias/gastos
+    //TODO: cambiar activity listas cuando no hay subcategorias/gastos
     //TODO: Poder borrar categorias, subcataegorias y gastos
     //TODO: Guardar gastos con categoria únicamente
 

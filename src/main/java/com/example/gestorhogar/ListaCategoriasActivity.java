@@ -5,16 +5,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.TypedArrayUtils;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -32,6 +35,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -44,8 +49,16 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
     public static final String EXTRA_CATEGORIA = "111";
 
     ArrayList<String> listCategorias;
+    public ArrayList<Integer> categoriasSeleccionadas = new ArrayList<>();
     RecyclerView recycler;
-    Button guardarFichero;
+    Button guardarFichero, eliminar;
+
+    Calendar calendar = Calendar.getInstance();
+    int año = calendar.get(calendar.YEAR);
+    int month = calendar.get(calendar.MONTH);
+    int dia = calendar.get(calendar.DAY_OF_MONTH);
+
+    String mesFinal = String.valueOf(month +1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +69,7 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
 
 
         guardarFichero = findViewById(R.id.listaCategoriaAct_guardar_btn);
+        eliminar = findViewById(R.id.listaCategoriasAct_eliminar_btn);
         recycler = findViewById(R.id.listaCategoriaAct_listado_recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
@@ -67,32 +81,31 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
         guardarFichero.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Funcion para guardar archivo
-//                if(ActivityCompat.checkSelfPermission(ListaCategoriasActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-//                        PackageManager.PERMISSION_GRANTED){
-//                    CreateFolder();
-//                }else{
-//                    ActivityCompat.requestPermissions(ListaCategoriasActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},100);
-//                }
+                dialogoCSV();
+            }
+        });
 
-                escribirFichero();
+        eliminar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                borrarCategoria();
+                guardarCategoria();
             }
         });
 
     }
 
 
-    private void escribirFichero() {
-        double totalSuma =0;
+    private void escribirFicheroCSV() {
+        double totalSuma = 0;
         if(checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)){
             ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "bd_subcategorias", null, 1);
             SQLiteDatabase db = conn.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT * FROM gastos ORDER BY fecha DESC",null);
-            File textFile = new File(Environment.getExternalStorageDirectory()+"/"+DIRECTORIO_APP, "datos.csv");
+            File textFile = new File(Environment.getExternalStorageDirectory()+"/"+DIRECTORIO_APP, dia+"_"+mesFinal+"_"+año+".csv");
             Toast.makeText(this, "Permiso dado", Toast.LENGTH_SHORT).show();
             try {
                 FileOutputStream fos = new FileOutputStream(textFile);
-//                fos.write("Soy una prueba a pelo".getBytes());
                 if(cursor.moveToFirst()){
                     fos.write("Categoria;Subcategoria;Importe;Fecha;Comentario".getBytes());
                     do{
@@ -149,4 +162,73 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
         intent.putExtra(EXTRA_CATEGORIA, categoria);
         startActivity(intent);
     }
+
+    @Override
+    public void onCategoriaLongClick(int position) {
+        if(comprobarArray(position)){
+
+        }else{
+            categoriasSeleccionadas.add(position);
+
+        }
+    }
+
+    public void dialogoCSV(){
+        AlertDialog.Builder alerta = new AlertDialog.Builder(ListaCategoriasActivity.this);
+        alerta.setTitle("Guardar gastos");
+        alerta.setMessage("Si acepta se guardará un archivo excel y borrará los gastos de la aplicación")
+                .setCancelable(false)
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        escribirFicheroCSV();
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alerta.create().show();
+
+    }
+
+    public boolean comprobarArray(int valor){
+        boolean existe = false;
+        for(int i = 0; i < categoriasSeleccionadas.size(); i++){
+            if(categoriasSeleccionadas.get(i) == valor) {
+                categoriasSeleccionadas.remove(i);
+                existe = true;
+            }
+        }
+
+        return existe;
+    }
+
+    public void borrarCategoria(){
+        Collections.sort(categoriasSeleccionadas);
+        Log.e("Categoria", "Categorias ordenadas "+categoriasSeleccionadas);
+        Collections.reverse(categoriasSeleccionadas);
+        Log.e("Categoria", "Categorias reverse "+categoriasSeleccionadas);
+
+        for(int i = 0; i<categoriasSeleccionadas.size(); i++){
+            int indiceBorrar = categoriasSeleccionadas.get(i);
+            listCategorias.remove(indiceBorrar);
+        }
+
+        Log.e("Categoria", "Categorias final "+listCategorias);
+    }
+
+    private void guardarCategoria() {
+        SharedPreferences sharedPreferences = getSharedPreferences("categorias", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(listCategorias);
+        editor.putString("lista categorias", json);
+        editor.apply();
+        finish();
+    }
+
 }

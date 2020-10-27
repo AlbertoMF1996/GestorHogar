@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#666666"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/itemCategoria_textoCategoria_textView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="#666666"
         android:gravity="center"
         android:text="TextView"
         android:textAlignment="center"

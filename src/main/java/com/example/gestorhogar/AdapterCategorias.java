@@ -1,5 +1,7 @@
 package com.example.gestorhogar;
 
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 public class AdapterCategorias extends RecyclerView.Adapter<AdapterCategorias.ViewHolderCategorias> {
 
     ArrayList<String> listCategorias;
+    ArrayList<Integer> catSeleccionadas = new ArrayList<>();
     private CategoriaListener mCategoriaListener;
 
     public AdapterCategorias(ArrayList<String> listCategorias, CategoriaListener categoriaListener) {
@@ -38,7 +41,7 @@ public class AdapterCategorias extends RecyclerView.Adapter<AdapterCategorias.Vi
         return listCategorias.size();
     }
 
-    public class ViewHolderCategorias extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolderCategorias extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         TextView categoria;
         CategoriaListener categoriaListener;
@@ -49,6 +52,7 @@ public class AdapterCategorias extends RecyclerView.Adapter<AdapterCategorias.Vi
             categoria = itemView.findViewById(R.id.itemCategoria_textoCategoria_textView);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         public void asignarDatos(String s) {
@@ -59,9 +63,34 @@ public class AdapterCategorias extends RecyclerView.Adapter<AdapterCategorias.Vi
         public void onClick(View v) {
             categoriaListener.onCategoriaListener(getAdapterPosition());
         }
+
+        @Override
+        public boolean onLongClick(View v) {
+            categoriaListener.onCategoriaLongClick(getAdapterPosition());
+            if(comprobarArray(getAdapterPosition())){
+                v.setBackgroundColor(Color.parseColor("#666666"));
+            }else{
+                catSeleccionadas.add(getAdapterPosition());
+                v.setBackgroundColor(Color.parseColor("#ff00ff"));
+            }
+            return true;
+        }
+    }
+
+    public boolean comprobarArray(int valor){
+        boolean existe = false;
+        for(int i = 0; i < catSeleccionadas.size(); i++){
+            if(catSeleccionadas.get(i) == valor) {
+                catSeleccionadas.remove(i);
+                existe = true;
+            }
+        }
+
+        return existe;
     }
 
     public interface CategoriaListener{
         void onCategoriaListener(int position);
+        void onCategoriaLongClick(int position);
     }
 }
