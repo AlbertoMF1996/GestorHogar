@@ -9,6 +9,15 @@ public class Gasto<Date> {
     private String fecha;
     private String comentario;
 
+    public Gasto(int id, String categoria, String subcategoria, double importe, String fecha, String comentario) {
+        this.id = id;
+        this.categoria = categoria;
+        this.subcategoria = subcategoria;
+        this.importe = importe;
+        this.fecha = fecha;
+        this.comentario = comentario;
+    }
+
     public Gasto(String categoria, String subcategoria, double importe, String fecha, String comentario) {
         this.categoria = categoria;
         this.subcategoria = subcategoria;

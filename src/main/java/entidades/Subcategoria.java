@@ -9,15 +9,13 @@ public class Subcategoria {
     private int gastosTotal;
 
 
-    public Subcategoria(int id, String subcategoria, String categoria, double importeTotal, int totalGastos) {
-        this.id = id;
+    public Subcategoria(String subcategoria, String categoria) {
         this.subcategoria = subcategoria;
         this.categoria = categoria;
-        this.importeTotal = importeTotal;
-        this.gastosTotal = totalGastos;
     }
 
-    public Subcategoria(String subcategoria, double importeTotal, int gastosTotal) {
+    public Subcategoria(int id, String subcategoria, double importeTotal, int gastosTotal) {
+        this.id = id;
         this.subcategoria = subcategoria;
         this.importeTotal = importeTotal;
         this.gastosTotal = gastosTotal;

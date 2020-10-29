@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -44,6 +45,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import entidades.Gasto;
+import entidades.Subcategoria;
 import utilidades.Utilidades;
 
 public class MainActivity extends AppCompatActivity /*implements Main2Activity.FinalizoCuadroDialogo*/{
@@ -59,7 +61,8 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
 
     Spinner categoria, subCategoria;
     Context contexto;
-    EditText cuantia, fechaEt, comentario;
+    EditText cuantia, comentario;
+    TextView fechaEt;
 
     Button guardar,resumen, addCategoria, addSubcategoria;
     ArrayList<String> arrayCategorias;
@@ -310,8 +313,9 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
                     // MENSAJE_SUBCATEGORIA tiene la subcategoria escrita | MENSAJE_CATEGORIA_SELECCIONADA tiene la categoria seleccionada de vuelta
                     // Crear un shared preferences de subcategorias
                     // Crear un array al comienzo donde se actualicen las subcategorias en función de la categoria seleccionada (onChangeListener)
+                    Subcategoria nuevaSubcategoria = new Subcategoria(data.getStringExtra(MENSAJE_SUBCATEGORIA), data.getStringExtra(MENSAJE_CATEGORIA_SELECCIONADA));
 
-                    guardarSubcategoria(data.getStringExtra(MENSAJE_SUBCATEGORIA),data.getStringExtra(MENSAJE_CATEGORIA_SELECCIONADA));
+                    guardarSubcategoria(nuevaSubcategoria);
 
                 }
         }
@@ -328,15 +332,14 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
         recreate();
     }
 
-    private void guardarSubcategoria(String subcategoria, String categoria){
+    private void guardarSubcategoria(Subcategoria subcategoria){
         SQLiteDatabase db = conn.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Utilidades.CAMPO_SUBCATEGORIA, subcategoria);
-        values.put(Utilidades.CAMPO_CATEGORIA, categoria);
+        values.put(Utilidades.CAMPO_SUBCATEGORIA, subcategoria.getSubcategoria());
+        values.put(Utilidades.CAMPO_CATEGORIA, subcategoria.getCategoria());
 
-        Long idResultante = db.insert(Utilidades.TABLA_SUBCATEGORIA, Utilidades.CAMPO_ID, values);
-
+        db.insert(Utilidades.TABLA_SUBCATEGORIA, Utilidades.CAMPO_ID, values);
 
         db.close();
         recreate();
@@ -363,6 +366,7 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
         db.close();
         cuantia.setText("");
         comentario.setText("");
+        fechaEt.setText("");
 
 
     }
@@ -411,8 +415,8 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
     }
     //TODO: Conectar entre dispositivos
     //TODO: cambiar activity listas cuando no hay subcategorias/gastos
-    //TODO: Poder borrar categorias, subcataegorias y gastos
     //TODO: Guardar gastos con categoria únicamente
+    //TODO: Abrir la fecha con un solo click
 
 
 

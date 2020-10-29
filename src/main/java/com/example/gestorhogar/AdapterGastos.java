@@ -16,9 +16,12 @@ import entidades.Gasto;
 public class AdapterGastos extends RecyclerView.Adapter<AdapterGastos.ViewHolderGastos> {
 
     ArrayList<Gasto> listaGastos;
+    ArrayList<Integer> gastosSeleccionados = new ArrayList<>();
+    private  GastoListener mGastoListener;
 
-    public AdapterGastos(ArrayList<Gasto> listaGastos) {
+    public AdapterGastos(ArrayList<Gasto> listaGastos, GastoListener gastoListener) {
         this.listaGastos = listaGastos;
+        this.mGastoListener = gastoListener;
     }
 
     @NonNull
@@ -26,7 +29,7 @@ public class AdapterGastos extends RecyclerView.Adapter<AdapterGastos.ViewHolder
     public ViewHolderGastos onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_gasto, parent,false);
-        return new ViewHolderGastos(view);
+        return new ViewHolderGastos(view, mGastoListener);
     }
 
     @Override
@@ -46,15 +49,49 @@ public class AdapterGastos extends RecyclerView.Adapter<AdapterGastos.ViewHolder
         return listaGastos.size();
     }
 
-    public class ViewHolderGastos extends RecyclerView.ViewHolder {
+    public class ViewHolderGastos extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         TextView etiImporte, etiFecha, etiComentario;
-        public ViewHolderGastos(@NonNull View itemView) {
+        GastoListener gastoListener;
+
+        public ViewHolderGastos(@NonNull View itemView, GastoListener gastoListener) {
             super(itemView);
+            this.gastoListener = gastoListener;
 
             etiImporte = itemView.findViewById(R.id.itemGasto_importe_textView);
             etiFecha = itemView.findViewById(R.id.itemGasto_fecha_textView);
             etiComentario = itemView.findViewById(R.id.itemGasto_comentario_textView);
+
+            itemView.setOnLongClickListener(this);
         }
+
+        @Override
+        public boolean onLongClick(View v) {
+            gastoListener.onGastoLongClick(getAdapterPosition());
+            if(comprobarArray(getAdapterPosition())){
+                v.setBackgroundColor(Color.parseColor("#666666"));
+            }else{
+                gastosSeleccionados.add(getAdapterPosition());
+                v.setBackgroundColor(Color.parseColor("#ff00ff"));
+            }
+
+            return false;
+        }
+
+        public boolean comprobarArray(int valor){
+            boolean existe = false;
+            for(int i = 0; i < gastosSeleccionados.size(); i++){
+                if(gastosSeleccionados.get(i) == valor) {
+                    gastosSeleccionados.remove(i);
+                    existe = true;
+                }
+            }
+
+            return existe;
+        }
+    }
+
+    public interface GastoListener{
+        void onGastoLongClick(int position);
     }
 }

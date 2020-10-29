@@ -88,8 +88,7 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
         eliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                borrarCategoria();
-                guardarCategoria();
+                dialogoEliminar();
             }
         });
 
@@ -195,6 +194,31 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
 
     }
 
+    public void dialogoEliminar(){
+        AlertDialog.Builder alerta = new AlertDialog.Builder(ListaCategoriasActivity.this);
+        alerta.setTitle("Eliminar");
+        alerta.setMessage("Si acepta se eliminará las categorias selecionadas")
+                .setCancelable(false)
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        borrarCategoria();
+                        guardarCategoria();
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alerta.create().show();
+
+    }
+
+
+
     public boolean comprobarArray(int valor){
         boolean existe = false;
         for(int i = 0; i < categoriasSeleccionadas.size(); i++){
@@ -232,3 +256,5 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
     }
 
 }
+
+//TODO: Ventana de diálogo que confirme el borrado

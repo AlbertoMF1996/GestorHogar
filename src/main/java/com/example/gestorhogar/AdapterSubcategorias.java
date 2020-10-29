@@ -1,5 +1,6 @@
 package com.example.gestorhogar;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import entidades.Subcategoria;
 public class AdapterSubcategorias extends RecyclerView.Adapter<AdapterSubcategorias.ViewHolderSubcategorias> {
 
     ArrayList<Subcategoria> listaSubcategorias;
+    ArrayList<Integer> subcategoriaSeleccionada = new ArrayList<>();
     private SubcategoriaListener mSubcategoriaListener;
 
     public AdapterSubcategorias(ArrayList<Subcategoria> listaSubcategorias, SubcategoriaListener subcategoriaListener) {
@@ -44,7 +46,7 @@ public class AdapterSubcategorias extends RecyclerView.Adapter<AdapterSubcategor
         return listaSubcategorias.size();
     }
 
-    public class ViewHolderSubcategorias extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolderSubcategorias extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         TextView etiSubcategoria, etiGastosTotales, etiImportesTotales;
         SubcategoriaListener subcategoriaListener;
@@ -58,15 +60,40 @@ public class AdapterSubcategorias extends RecyclerView.Adapter<AdapterSubcategor
             etiImportesTotales = itemView.findViewById(R.id.itemSubcategoria_importeTotal_textView);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             subcategoriaListener.onSubcategoriaListener(getAdapterPosition());
         }
+
+        @Override
+        public boolean onLongClick(View v) {
+            subcategoriaListener.onSubcategoriaLongClick(getAdapterPosition());
+            if(comprobarArray(getAdapterPosition())){
+                v.setBackgroundColor(Color.parseColor("#666666"));
+            }else{
+                subcategoriaSeleccionada.add(getAdapterPosition());
+                v.setBackgroundColor(Color.parseColor("#ff00ff"));
+            }
+            return true;
+        }
+    }
+    public boolean comprobarArray(int valor){
+        boolean existe = false;
+        for(int i = 0; i < subcategoriaSeleccionada.size(); i++){
+            if(subcategoriaSeleccionada.get(i) == valor) {
+                subcategoriaSeleccionada.remove(i);
+                existe = true;
+            }
+        }
+
+        return existe;
     }
 
     public interface SubcategoriaListener{
         void onSubcategoriaListener(int position);
+        void onSubcategoriaLongClick(int position);
     }
 }
