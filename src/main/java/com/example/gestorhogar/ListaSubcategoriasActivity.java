@@ -30,7 +30,7 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
 
     TextView añadeSubcategoria;
     ArrayList<Subcategoria> listaSubcategorias;
-    ArrayList<Integer> subcategoriasSeleccionadas = new ArrayList<>();
+    ArrayList<Subcategoria> subcategoriasSeleccionadas = new ArrayList<>();
     RecyclerView recyclerSubcategorias;
     String categoriaSeleccionada;
     Button eliminar;
@@ -144,12 +144,44 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
 
     @Override
     public void onSubcategoriaLongClick(int position) {
-        if(comprobarArray(position)){
+        if(comprobarArray(listaSubcategorias.get(position))){
+//            Log.e("PRUEBA", "El objeto esta en la lista");
+
+
 
         }else{
-            subcategoriasSeleccionadas.add(position);
+//            Log.e("PRUEBA", "El objeto no esta en la lista");
+
+            subcategoriasSeleccionadas.add(listaSubcategorias.get(position));
 
         }
+        for(int i = 0; i < subcategoriasSeleccionadas.size(); i++ ){
+            Log.e("PRUEBA", "obj "+ subcategoriasSeleccionadas.get(i).getSubcategoria());
+            Log.e("PRUEBA", "obj 2: "+ subcategoriasSeleccionadas.size());
+        }
+    }
+
+    public boolean comprobarArray(Subcategoria obj){
+        boolean existe = false;
+
+        for(int i  = 0; i < subcategoriasSeleccionadas.size(); i++){
+            if(subcategoriasSeleccionadas.get(i).getId() == obj.getId()){
+                Log.e("PRUEBA", "Encontrado el objeto en la lista");
+                subcategoriasSeleccionadas.remove(i);
+                existe = true;
+            }
+        }
+
+        return existe;
+    }
+
+    public void borrarSubcategoria(){
+        SQLiteDatabase db = conn.getWritableDatabase();
+
+        for(int i = 0; i<subcategoriasSeleccionadas.size(); i++){
+            db.delete(Utilidades.TABLA_SUBCATEGORIA,Utilidades.CAMPO_ID+"=?",new String[]{subcategoriasSeleccionadas.get(i).getId()+""});
+        }
+
     }
 
     public void dialogoEliminar(){
@@ -175,27 +207,7 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
 
     }
 
-    public boolean comprobarArray(int valor){
-        boolean existe = false;
-        for(int i = 0; i < subcategoriasSeleccionadas.size(); i++){
-            if(subcategoriasSeleccionadas.get(i) == valor) {
-                subcategoriasSeleccionadas.remove(i);
-                existe = true;
-            }
-        }
 
-        return existe;
-    }
-
-    public void borrarSubcategoria(){
-        SQLiteDatabase db = conn.getWritableDatabase();
-
-        for(int i = 0; i<subcategoriasSeleccionadas.size(); i++){
-            Log.e("Lista", "Id"+ listaSubcategorias.get(i).getId()+" Subcategoria "+listaSubcategorias.get(i).getSubcategoria());
-            db.delete(Utilidades.TABLA_SUBCATEGORIA,Utilidades.CAMPO_ID+"=?",new String[]{listaSubcategorias.get(i).getId()+""});
-        }
-
-    }
 }
 
 //TODO: Desglosar gastos sin subcategoria

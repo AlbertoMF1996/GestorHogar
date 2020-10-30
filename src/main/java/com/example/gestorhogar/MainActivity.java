@@ -229,8 +229,9 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
 
                 comentarioTexto = comentario.getText().toString();
 
-                if(subCategoria.getSelectedItem() == null){
+                if(subCategoria.getSelectedItemPosition() == 0){
                     subcategoriaFinal = "";
+                    Log.e("PRUEBA", "entro en la pòsicion 0");
                 }else{
                     subcategoriaFinal = subCategoria.getSelectedItem().toString();
                 }
@@ -357,7 +358,6 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
     private void guardarGasto(Gasto gasto){
         SQLiteDatabase db = conn.getWritableDatabase();
 
-
         ContentValues values = new ContentValues();
         values.put(Utilidades.CAMPO_CATEGORIA, gasto.getCategoria());
         values.put(Utilidades.CAMPO_SUBCATEGORIA, gasto.getSubcategoria());
@@ -397,6 +397,7 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
 
     private void cargarSubcategoria(String categoriaSeleccionada){
         arraySubcategorias = new ArrayList<>();
+
         SQLiteDatabase db = conn.getReadableDatabase();
         String [] campos = {Utilidades.CAMPO_SUBCATEGORIA, Utilidades.CAMPO_CATEGORIA};
         String selection = Utilidades.CAMPO_CATEGORIA + " = ?";
@@ -411,6 +412,7 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
             }
             arraySubcategorias = subcategoriasGuardadas;
             Collections.sort(arraySubcategorias);
+            arraySubcategorias.add(0, "Sin subcategoria");
             cursor.close();
 
         }catch (Exception e){
