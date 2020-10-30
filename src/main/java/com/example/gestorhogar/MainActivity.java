@@ -116,23 +116,24 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
         cuantia.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if(after == 0){
-                    guardar.setEnabled(false);
-                }else{
-                    guardar.setEnabled(true);
-                }
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
 
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                if(s.toString().equals("") || categoria.getSelectedItem() == null){
+                    guardar.setEnabled(false);
 
+                }else{
+                    guardar.setEnabled(true);
+
+                }
             }
         });
 
@@ -198,6 +199,7 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
             public void onClick(View v) {
                 String fechaTexto;
                 String comentarioTexto;
+                String subcategoriaFinal;
 
                 Log.e("FECHA", "valor campo fecha: "+fechaEt.getText().toString().length());
                 Log.e("FECHA", "Dia: "+day+" mes: "+month+" año:"+year);
@@ -227,8 +229,14 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
 
                 comentarioTexto = comentario.getText().toString();
 
+                if(subCategoria.getSelectedItem() == null){
+                    subcategoriaFinal = "";
+                }else{
+                    subcategoriaFinal = subCategoria.getSelectedItem().toString();
+                }
 
-                Gasto nuevoGasto = new Gasto (categoria.getSelectedItem().toString(),subCategoria.getSelectedItem().toString(), importeFinal, fechaTexto, comentarioTexto);
+
+                Gasto nuevoGasto = new Gasto (categoria.getSelectedItem().toString(),subcategoriaFinal, importeFinal, fechaTexto, comentarioTexto);
 
                 guardarGasto(nuevoGasto);
             }
@@ -414,9 +422,7 @@ public class MainActivity extends AppCompatActivity /*implements Main2Activity.F
 //        }
     }
     //TODO: Conectar entre dispositivos
-    //TODO: cambiar activity listas cuando no hay subcategorias/gastos
-    //TODO: Guardar gastos con categoria únicamente
-    //TODO: Abrir la fecha con un solo click
+    //TODO: la puta estética
 
 
 

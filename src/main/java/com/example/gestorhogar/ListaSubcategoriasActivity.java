@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
     public static final String INTENT_SUBCATEGORIA = "22";
     public int refrescar = 0;
 
+    TextView añadeSubcategoria;
     ArrayList<Subcategoria> listaSubcategorias;
     ArrayList<Integer> subcategoriasSeleccionadas = new ArrayList<>();
     RecyclerView recyclerSubcategorias;
@@ -42,7 +44,9 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
 
         listaSubcategorias = new ArrayList<>();
         eliminar = findViewById(R.id.listSubcategoriasAct_eliminar_btn);
+        añadeSubcategoria = findViewById(R.id.listaSubcategoriasAct_default_tv);
         conn = new ConexionSQLiteHelper(this, "bd_subcategorias", null, 1);
+
 
 
         recyclerSubcategorias = findViewById(R.id.listaSubcategorias_recyclerSubcategorias_recyclerView);
@@ -50,6 +54,9 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
         Intent intent = getIntent();
         categoriaSeleccionada = intent.getStringExtra(ListaCategoriasActivity.EXTRA_CATEGORIA);
         llenarSubcategorias(categoriaSeleccionada);
+        if(listaSubcategorias.size() == 0){
+            añadeSubcategoria.setVisibility(View.VISIBLE);
+        }
 
 
         AdapterSubcategorias adapterSubcategorias = new AdapterSubcategorias(listaSubcategorias, this);
@@ -78,11 +85,17 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
         String subcategoria;
         double importeTotal = 0;
         int gastoTotal=0;
+
+
         ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "bd_subcategorias", null, 1);
         SQLiteDatabase db = conn.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM subcategorias WHERE  categoria = ? ORDER BY subcategoria ASC", new String[]{categoria});
+        Cursor cursor = db.rawQuery("SELECT * FROM subcategorias WHERE categoria = ? ORDER BY subcategoria ASC", new String[]{categoria});
+        Log.e("Subcategoria", "Entro en el metodo llenar subcategorias");
 
-        if(cursor.moveToFirst()){  //RECORRE LA TABLA SUBCATEGORIAS Y PARA EN CADA REGISTRO
+        //RECORRE LA TABLA SUBCATEGORIAS Y PARA EN CADA REGISTRO
+        if(cursor.moveToFirst()){
+            Log.e("Subcategoria", "Entro en el cursor");
+
             do{
                 Log.e("Gasto", "ID: "+cursor.getString(0)+" Subcategoria: "+cursor.getString(1)+" Categoria: "+cursor.getString(2));
                 id = cursor.getInt(0);
@@ -99,10 +112,20 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
                 importeTotal = 0;
                 gastoTotal = 0;
             } while (cursor.moveToNext());
-        }else{
-            Toast.makeText(getApplicationContext(),"La categoria "+categoriaSeleccionada+" no tiene subcategorias",Toast.LENGTH_SHORT);
-            Log.e("Error","entro");
         }
+
+        Cursor cursorGastoSinSubcategoria = db.rawQuery("SELECT * FROM gastos WHERE categoria = ? AND subcategoria = ? ORDER BY subcategoria ASC", new String[]{categoria, ""});
+        if(cursorGastoSinSubcategoria.moveToFirst()){
+            double importeTotalSinSubcategoria = 0 ;
+
+            do{
+                importeTotalSinSubcategoria += cursorGastoSinSubcategoria.getDouble(3);
+                gastoTotal++;
+                Log.e("SINSUBCATEGORIA", "EXISTE UN GASTO SIN SUBCATEGORIA");
+            }while(cursorGastoSinSubcategoria.moveToNext());
+            listaSubcategorias.add(new Subcategoria(-1,"Gastos sin subcategoria",importeTotalSinSubcategoria,gastoTotal));
+        }
+
     }
 
     @Override
@@ -174,3 +197,5 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
 
     }
 }
+
+//TODO: Desglosar gastos sin subcategoria

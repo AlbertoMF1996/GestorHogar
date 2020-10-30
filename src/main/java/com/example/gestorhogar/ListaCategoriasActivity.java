@@ -23,6 +23,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -52,6 +53,7 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
     public ArrayList<Integer> categoriasSeleccionadas = new ArrayList<>();
     RecyclerView recycler;
     Button guardarFichero, eliminar;
+    TextView añadeCategorias;
 
     Calendar calendar = Calendar.getInstance();
     int año = calendar.get(calendar.YEAR);
@@ -68,12 +70,15 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
         cargarCategoria();
 
 
+        añadeCategorias = findViewById(R.id.listaCategoriasAct_default_tv);
         guardarFichero = findViewById(R.id.listaCategoriaAct_guardar_btn);
         eliminar = findViewById(R.id.listaCategoriasAct_eliminar_btn);
         recycler = findViewById(R.id.listaCategoriaAct_listado_recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
-
+        if(listCategorias.size()== 0){
+            añadeCategorias.setVisibility(View.VISIBLE);
+        }
 
         AdapterCategorias adapter = new AdapterCategorias(listCategorias, this);
         recycler.setAdapter(adapter);
@@ -256,5 +261,3 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
     }
 
 }
-
-//TODO: Ventana de diálogo que confirme el borrado

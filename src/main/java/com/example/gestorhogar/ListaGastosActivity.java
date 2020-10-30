@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -23,6 +24,7 @@ public class ListaGastosActivity extends AppCompatActivity implements AdapterGas
 
     ArrayList<Gasto> listaGastos;
     ArrayList<Integer> gastosSeleccionados = new ArrayList<>();
+    TextView añadeGastos;
     RecyclerView recyclerGasto;
     String categoriaSeleccionada, subcategoriaSeleccionada;
     Button eliminar;
@@ -33,6 +35,7 @@ public class ListaGastosActivity extends AppCompatActivity implements AdapterGas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_gastos);
 
+        añadeGastos = findViewById(R.id.listaGastos_default_tv);
         listaGastos = new ArrayList<>();
         recyclerGasto = findViewById(R.id.listaGastos_gastos_recyclerView);
         eliminar = findViewById(R.id.listaGastosAct_eliminar_btn);
@@ -43,6 +46,10 @@ public class ListaGastosActivity extends AppCompatActivity implements AdapterGas
         subcategoriaSeleccionada = intent.getStringExtra(ListaSubcategoriasActivity.INTENT_SUBCATEGORIA);
 
         llenarGastos(subcategoriaSeleccionada, categoriaSeleccionada);
+
+        if(listaGastos.size() == 0){
+            añadeGastos.setVisibility(View.VISIBLE);
+        }
 
         AdapterGastos adapterGastos = new AdapterGastos(listaGastos, this);
         recyclerGasto.setAdapter(adapterGastos);
@@ -94,7 +101,7 @@ public class ListaGastosActivity extends AppCompatActivity implements AdapterGas
     public void dialogoEliminar(){
         AlertDialog.Builder alerta = new AlertDialog.Builder(ListaGastosActivity.this);
         alerta.setTitle("Eliminar");
-        alerta.setMessage("Si acepta se eliminará las subcategorias selecionadas")
+        alerta.setMessage("Si acepta se eliminará los gastos selecionados")
                 .setCancelable(false)
                 .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
