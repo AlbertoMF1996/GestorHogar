@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -93,7 +94,14 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
         eliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogoEliminar();
+                if(categoriasSeleccionadas.size()!=0){
+                    dialogoEliminar();
+                }else{
+                    Toast toast = Toast.makeText(getApplicationContext(), "Manten en una categoria para seleccionarla", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER|Gravity.CENTER_HORIZONTAL,0,10);
+                    toast.show();
+                }
+                
             }
         });
 
@@ -107,7 +115,7 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
             SQLiteDatabase db = conn.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT * FROM gastos ORDER BY fecha DESC",null);
             File textFile = new File(Environment.getExternalStorageDirectory()+"/"+DIRECTORIO_APP, dia+"_"+mesFinal+"_"+año+".csv");
-            Toast.makeText(this, "Permiso dado", Toast.LENGTH_SHORT).show();
+
             try {
                 FileOutputStream fos = new FileOutputStream(textFile);
                 if(cursor.moveToFirst()){
@@ -133,7 +141,7 @@ public class ListaCategoriasActivity extends AppCompatActivity implements Adapte
                 e.printStackTrace();
             }
         }else{
-            Toast.makeText(this, "Permiso no dado", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Permiso no dado", Toast.LENGTH_SHORT).show();
         }
 
     }

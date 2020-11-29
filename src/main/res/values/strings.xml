@@ -8,6 +8,8 @@
     <string name="hintNuevoValor">Nuevo</string>
     <string name="dialogoAceptar_btn">Aceptar</string>
     <string name="dialogoCancelar_btn">Cancelar</string>
+    <string name="tv_categoría">Categoría</string>
+    <string name="tv_subcategoria">Subcategoría</string>
 
 
     <string-array name="categorias">

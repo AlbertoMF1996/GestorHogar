@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -65,7 +66,14 @@ public class ListaSubcategoriasActivity extends AppCompatActivity implements Ada
         eliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogoEliminar();
+                if(subcategoriasSeleccionadas.size() != 0){
+                    dialogoEliminar();
+                }else{
+                    Toast toast = Toast.makeText(getApplicationContext(), "Manten en una subcategoria para seleccionarla", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER|Gravity.CENTER_HORIZONTAL,0,10);
+                    toast.show();
+                }
+
             }
         });
 

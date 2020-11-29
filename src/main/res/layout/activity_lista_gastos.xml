@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#4E4E4E"
     tools:context=".ListaGastosActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -33,11 +34,11 @@
         android:id="@+id/listaGastos_default_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Sin gastos"
+        android:textSize="42dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/listaGastos_gastos_recyclerView"
         app:layout_constraintEnd_toEndOf="@+id/listaGastos_gastos_recyclerView"
         app:layout_constraintStart_toStartOf="@+id/listaGastos_gastos_recyclerView"
-        app:layout_constraintTop_toTopOf="@+id/listaGastos_gastos_recyclerView"
-        android:text="Sin gastos"
-        android:textSize="42dp"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toTopOf="@+id/listaGastos_gastos_recyclerView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
